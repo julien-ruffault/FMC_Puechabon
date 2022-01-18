@@ -41,6 +41,7 @@ climate_data          <- create.climate.data(filePath = climateData_path,
 
 soil_parameters       <- create.soil.parameters(filePath = soilParameters_path, modeling_options = modeling_options, offSetPsoil = .3)
 
+#modif
 vegetation_parameters <- create.vegetation.parameters(filePath = vegetationParameters_path, 
                                                       stand_parameters = stand_parameters, 
                                                       soil_parameter = soil_parameters,
