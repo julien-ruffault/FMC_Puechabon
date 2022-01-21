@@ -13,8 +13,6 @@
 #' a list with modeling options to run  SurEau-Ecos
 #' @export
 #' @examples
-#'
-#'
 create.vegetation.parameters <- function(filePath, listOfParameters, stand_parameters, soil_parameters, modeling_options) {
 
   

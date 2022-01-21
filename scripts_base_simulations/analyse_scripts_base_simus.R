@@ -1,6 +1,6 @@
 # analyse scripts base simus pour calage des parametres 
 
-
+dirname(dirname(rstudioapi::getActiveDocumentContext()$path))  
 # Output loading an plotting  ------------------------------------------
 filename  = paste0(mainDir,"/test_FMC_Puechabon_VG.csv")
 DATA      = read.csv(filename,header=T, dec='.', sep="")

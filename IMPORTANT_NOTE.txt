@@ -1,0 +1,5 @@
+# FMC_Puechabon
+
+ATTENTION ------
+Tous le codes sont bases sur les paramètres de vegetation et sol définis dans input_parameters donc ne pas changer ces inputs sans être sur de l'impact sur l'ensemble des résultats
+----
