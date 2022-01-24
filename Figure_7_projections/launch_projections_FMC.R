@@ -30,15 +30,18 @@ output_path               <-  paste0(mainDir,'/Figure_7_projections/FMC_projecte
 
 modeling_options  <- create.modeling.options(compOptionsForEvapo = "Fast",
                                              transpirationModel = 'Jarvis',
+                                             timeStepForEvapo=2,
                                              defoliation = T,
                                              stomatalRegFormulation = "Sigmoid",
                                              PedoTransferFormulation="VG") 
 
-simulation_parameters <- create.simulation.parameters(startYearSimulation = 2090,                       
-                                                      endYearSimulation = 2098,
+simulation_parameters <- create.simulation.parameters(startYearSimulation = 2071,                       
+                                                      endYearSimulation = 2099,
                                                       mainDir = mainDir,
                                                       resolutionOutput = "yearly",
                                                       outputType = 'yearly_forFMC',
+                                                      # resolutionOutput = "subdaily",
+                                                      # outputType = 'diagnostic_subdaily',
                                                       overWrite = T,
                                                       outputPath = output_path)
 
@@ -54,8 +57,6 @@ vegetation_parameters <- create.vegetation.parameters(filePath = vegetationParam
                                                       soil_parameter = soil_parameters,
                                                       modeling_options = modeling_options)
 
-
-
 run.SurEau_Ecos(modeling_options = modeling_options ,
                 simulation_parameters = simulation_parameters, 
                 climate_data = climate_data,
@@ -64,5 +65,13 @@ run.SurEau_Ecos(modeling_options = modeling_options ,
                 vegetation_parameters = vegetation_parameters)
 
 
-
-
+filename = paste0(mainDir,'/Figure_7_projections/FMC_projected/',MODELS_NAME[MOD],'/FMC_rcp85.csv')
+DATA      = read.csv(filename,header=T, dec='.', sep="")
+head(DATA)
+DATA$Time = as.POSIXct(DATA$Time,format='%Y-%m-%d/%H:%M:%S')
+plot(DATA$LAI)
+plot(DATA$LAIdead)
+plot(DATA$FMCCanopy)
+lines(DATA$LFMC,col=2)
+plot(DATA$PLC_Leaf)
+plot(DATA$Psi_LSym,type='l')

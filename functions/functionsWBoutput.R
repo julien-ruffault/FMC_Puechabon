@@ -205,7 +205,7 @@ update.WBdaily <- function(WBdaily,WBveg,WBclim,WBsoil){
 
   
   WBdaily$FMCCanopy_min = min(WBdaily$FMCCanopy_min,WBveg$FMCCanopy)
-  WBdaily$LFMC_min      = min(WBdaily$FMCCanopy_min,WBveg$LFMC)
+  WBdaily$LFMC_min      = min(WBdaily$LFMC_min,WBveg$LFMC)
   
   
   

@@ -13,7 +13,7 @@
 #       
 mainDir = dirname(rstudioapi::getActiveDocumentContext()$path) 
 
-PIX=8766 # Pixel Puechabon dans SAFRAN : 8766
+PIX=8766 # Pixel Puechabon dans SAFRAN : 8766 (double checked)
 MAIN_CLIMATE_DIR <- ("/Volumes/SHARED_DATA/CLIMAT/CMIP5/Final_Downscaled_France/")  
 MODELS_NAME <- c("CNRM_RCA4", "CSIRO_RCA4", "HadGEM_RACMO22", "HadGEM_RCA4", "ICHEC_EC_EARTH_HIRHAM5", "ICHEC_EC_EARTH_RACMO22", "ICHEC_EC_EARTH_RCA4", "IPSL_CM5A_RCA4", "IPSL_CM5A_WRF331F", "MIROC-MIROC5_SMHI-RCA4", "MPI_ESM_RCA4", "MPI_ESM_REMO2009_r1i1p1", "MPI_ESM_REMO2009_r2i1p1", "MPI_RCA4", "SMHI_CCCma_CanESM2_RCA4", "SMHI_NCC_NorESM1_M_RCA4", "SMHI_NOAA_GFDL_GFDL_ESM2M_RCA4")
 
@@ -46,6 +46,7 @@ for (MOD in 1:length(MODELS_NAME)) {# first loop:  MODELS
   data_histo <- data_histo[,-6]
   head(data_histo)
   colnames(data_histo) <- c('PPT_sum','Tair_mean','Tair_min','Tair_max','WS_mean','RG_sum','RHair_min','RHair_mean','RHair_max')
+  data_histo$RG_sum[data_histo$RG_sum<0] <- 0
   data_histo$DATE = as.character(refTime_histo,format= '%d/%m/%Y')
   climat_histo[[MOD]] = data_histo
   
@@ -55,6 +56,7 @@ for (MOD in 1:length(MODELS_NAME)) {# first loop:  MODELS
   data_rcp45 <- data_rcp45[,-6]
   head(data_rcp45)
   colnames(data_rcp45) <- c('PPT_sum','Tair_mean','Tair_min','Tair_max','WS_mean','RG_sum','RHair_min','RHair_mean','RHair_max')
+  data_rcp45$RG_sum[data_rcp45$RG_sum<0] <- 0
   data_rcp45$DATE = as.character(refTime_rcp45,format= '%d/%m/%Y')
   climat_rcp45[[MOD]] = data_rcp45  
   
@@ -65,6 +67,7 @@ for (MOD in 1:length(MODELS_NAME)) {# first loop:  MODELS
   data_rcp85 <- data_rcp85[,-6]
   head(data_rcp85)
   colnames(data_rcp85) <- c('PPT_sum','Tair_mean','Tair_min','Tair_max','WS_mean','RG_sum','RHair_min','RHair_mean','RHair_max')
+  data_rcp85$RG_sum[data_rcp85$RG_sum<0] <- 0
   data_rcp85$DATE = as.character(refTime_rcp85,format= '%d/%m/%Y')
   climat_rcp85[[MOD]] = data_rcp85
   
@@ -91,7 +94,16 @@ saveRDS(climat_rcp45,file=file.path(mainDir,'climate_projection_data/climat_rcp4
 saveRDS(climat_rcp85,file=file.path(mainDir,'climate_projection_data/climat_rcp85.csv'))
 
 
+# to check projexctions
+# 
+HH    = aggregate(climat_histo[[8]]$Tair_mean,by=list(year(as.Date(climat_histo[[8]]$DATE,format='%d/%m/%Y'))),mean)
+RR85  = aggregate(climat_rcp85[[8]]$Tair_mean,by=list(year(as.Date(climat_rcp85[[8]]$DATE,format='%d/%m/%Y'))),mean)
 
+
+plot(rbind(HH,RR85))
+# 
+# 
+# 
 
 
 

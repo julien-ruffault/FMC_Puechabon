@@ -53,7 +53,7 @@ run.SurEau_Ecos(modeling_options = modeling_options ,
                 vegetation_parameters = vegetation_parameters)
 
 # Output loading an plotting  ------------------------------------------
-filename  = paste0(mainDir,"/test_FMC_Puechabon_VG.csv")
+filename  = paste0(mainDir,"/scripts_base_simulations/test_FMC_Puechabon_VG.csv")
 DATA      = read.csv(filename,header=T, dec='.', sep="")
 DATA$Time = as.POSIXct(DATA$Time,format='%Y-%m-%d/%H:%M:%S')
 
