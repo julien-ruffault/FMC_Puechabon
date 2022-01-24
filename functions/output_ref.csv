@@ -128,6 +128,8 @@ yearly_Psi_SApoMin;WByearly;Psi_SApoMin;1;4
 yearly_Psi_SApoMax;WByearly;Psi_SApoMax;1;4
 yearly_PLC_Leaf_max;WByearly;PLC_Leaf_max;1;4
 yearly_PLC_Stem_max;WByearly;PLC_Stem_max;1;4
+yearly_LFMC_min;WByearly;LFMC_min;1;4
+yearly_FMCCanopy_min;WByearly;FMCCanopy_min;1;4
 yearly_temperature_max;WByearly;temperature_max;1;4
 yearly_RH_min;WByearly;RH_min;1;4
 yearly_RG;WByearly;RG;1;2

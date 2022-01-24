@@ -129,6 +129,8 @@ new.WBdaily  <- function(){
   WBdaily$VPDmean = NA
   WBdaily$VPDmax = NA
   
+  WBdaily$FMCCanopy_min = 500
+  WBdaily$LFMC_min = 500
   
   WBdaily$SWS=numeric(3)
   
@@ -165,7 +167,8 @@ new.WByearly <- function(){
   WByearly$VPDmean  = NA
   WByearly$VPDmax = NA
   
-  
+  WByearly$FMCCanopy_min = 500
+  WByearly$LFMC_min = 500
   
   WByearly$dayOfDeath = NA
   WByearly$dayOfStomatalClosure = NA
@@ -201,6 +204,11 @@ update.WBdaily <- function(WBdaily,WBveg,WBclim,WBsoil){
   WBdaily$WS  = WBclim$WS_mean
 
   
+  WBdaily$FMCCanopy_min = min(WBdaily$FMCCanopy_min,WBveg$FMCCanopy)
+  WBdaily$LFMC_min      = min(WBdaily$FMCCanopy_min,WBveg$LFMC)
+  
+  
+  
   WBdaily$SWS  = WBsoil$soilWaterStock
   
   
@@ -232,6 +240,10 @@ update.WByearly <- function(WByearly,WBdaily,dayOfDeath,WBveg,DAY){
   WByearly$PPT = WByearly$PPT + WBdaily$PPT
   WByearly$ETP = WByearly$ETP + WBdaily$ETP
   WByearly$VPDmax = max(WByearly$VPDmax, WBdaily$VPD)
+  
+  WByearly$FMCCanopy_min = min(WByearly$FMCCanopy_min,WBdaily$FMCCanopy_min)
+  WByearly$LFMC_min      = min(WByearly$LFMC_min,WBdaily$LFMC_min)
+  
   
   if (!missing(dayOfDeath))
       {WByearly$dayOfDeath = dayOfDeath}

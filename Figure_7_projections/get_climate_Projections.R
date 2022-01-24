@@ -2,9 +2,11 @@
 # date : 21/01/2022
 # get bias-corrected climate data from 17 climate models (EURO-CORDEX) for the gridcell of the puechabon study site 
 # also directly computes data for its use in SurEau-Ecos (right variables and columns names)
-
+# need to be run only one time
 # See details about climate data in Pimont et al. (in prep) 
 # This script requires to have access to URFM (INRAE) NAS where the climate data are stored 
+
+
 
 # notes : get simulations done with François from PEF NAS for the 17 models/ Il faut juste identifier le pixel de PUechabon dans Safran 
 #       : include critical thresholds identified in Pimont et al. 2019 in the figure to indicated the increase in the likelihood of going below these critical thresholds in the future 
@@ -66,9 +68,18 @@ for (MOD in 1:length(MODELS_NAME)) {# first loop:  MODELS
   data_rcp85$DATE = as.character(refTime_rcp85,format= '%d/%m/%Y')
   climat_rcp85[[MOD]] = data_rcp85
   
+  
+  if (!dir.exists(file.path(mainDir,'climate_projection_data',MODELS_NAME[MOD])))
+  {
+  dir.create(file.path(mainDir,'climate_projection_data',MODELS_NAME[MOD]))
+  }
 
+  write.table(x = data_histo,file = file.path(mainDir,'climate_projection_data',MODELS_NAME[MOD],'climat_histo.csv'),row.names=F,sep=';',dec='.')
+  write.table(x = data_rcp45,file = file.path(mainDir,'climate_projection_data',MODELS_NAME[MOD],'climat_rcp45.csv'),row.names=F,sep=';',dec='.')
+  write.table(x = data_rcp85,file = file.path(mainDir,'climate_projection_data',MODELS_NAME[MOD],'climat_rcp85.csv'),row.names=F,sep=';',dec='.')
 }
-
+  
+  
 setNames(climat_histo,MODELS_NAME)
 setNames(climat_rcp45,MODELS_NAME)
 setNames(climat_rcp85,MODELS_NAME)
