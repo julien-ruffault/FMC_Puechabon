@@ -10,7 +10,7 @@ epsilonSym_Leaf;15
 PiFullTurgor_Leaf;-2.5
 apoFrac_Leaf;0.4
 LDMC;500
-LMA;106
+LMA;190
 k_PlantInit;0.8
 k_SSymInit;0.26
 canopyStorageParam;1.5
