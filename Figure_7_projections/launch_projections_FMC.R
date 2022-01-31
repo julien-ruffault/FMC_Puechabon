@@ -96,6 +96,63 @@ run.SurEau_Ecos(modeling_options = modeling_options ,
 }
 
 
+
+
+# Rcp45
+
+foreach(MOD=(1:length(MODELS_NAME)),.packages=c('lubridate','insol')) %dopar% {
+  
+  
+  if (!dir.exists(file.path(mainDir,'/Figure_7_projections/FMC_projected/',MODELS_NAME[MOD])))
+  {
+    dir.create(file.path(mainDir,'/Figure_7_projections/FMC_projected/',MODELS_NAME[MOD]))
+  }
+  
+  
+  climateData_path          <-  paste0(mainDir,'/Figure_7_projections/climate_projection_data/',MODELS_NAME[MOD],'/climat_rcp45.csv')
+  output_path               <-  paste0(mainDir,'/Figure_7_projections/FMC_projected/',MODELS_NAME[MOD],'/FMC_rcp45.csv')
+  
+  
+  modeling_options  <- create.modeling.options(compOptionsForEvapo = "Fast",
+                                               transpirationModel = 'Jarvis',
+                                               timeStepForEvapo=2,
+                                               defoliation = T,
+                                               stomatalRegFormulation = "Sigmoid",
+                                               PedoTransferFormulation="VG") 
+  
+  simulation_parameters <- create.simulation.parameters(startYearSimulation = 2006,                       
+                                                        endYearSimulation = 2100,
+                                                        mainDir = mainDir,
+                                                        resolutionOutput = "yearly",
+                                                        outputType = 'yearly_forFMC',
+                                                        # resolutionOutput = "subdaily",
+                                                        # outputType = 'diagnostic_subdaily',
+                                                        overWrite = T,
+                                                        outputPath = output_path)
+  
+  stand_parameters      <- create.stand.parameters(LAImax = 2.2, lat = 43.75, lon = 3.6)
+  
+  climate_data          <- create.climate.data(filePath = climateData_path, 
+                                               modeling_options = modeling_options,
+                                               simulation_parameters = simulation_parameters) #
+  soil_parameters       <- create.soil.parameters(filePath = soilParameters_path, modeling_options = modeling_options, offSetPsoil = .3)
+  
+  vegetation_parameters <- create.vegetation.parameters(filePath = vegetationParameters_path, 
+                                                        stand_parameters = stand_parameters, 
+                                                        soil_parameter = soil_parameters,
+                                                        modeling_options = modeling_options)
+  
+  run.SurEau_Ecos(modeling_options = modeling_options ,
+                  simulation_parameters = simulation_parameters, 
+                  climate_data = climate_data,
+                  stand_parameters = stand_parameters, 
+                  soil_parameters = soil_parameters,
+                  vegetation_parameters = vegetation_parameters)
+  
+}
+
+
+
 # Historical period 
 foreach(MOD=(1:length(MODELS_NAME)),.packages=c('lubridate','insol')) %dopar% {
   
