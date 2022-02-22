@@ -23,6 +23,7 @@ DATA_day$PPT= aggregate(DATA$PPT,by=list(yday(DATA$Time),year(DATA$Time)),sum)$x
 # Get sapflow data 
 library(readxl)
 library(lubridate)
+library(hydroGOF) # for function rmse
 data_sapflow = as.data.frame(read_excel(paste0(mainDir,'/validation_data/Sapflow_day_SMR_2016-2018.xlsx')))
 data_sapflow$Date = as.Date(data_sapflow$Date,format='%Y-%m-%d')
 head(data_sapflow)
@@ -55,52 +56,114 @@ rm(data_potential,data_MDpot,data_PDpot,data_sapflow,DATA_day,DATA) # clean evir
 
 # options 
 cexx=0.7
-datesAxis  = seq.Date(from = as.Date("2016/01/15"),to =as.Date("2018/12/15") ,by='3 month')
+datesAxis  = seq.Date(from = as.Date("2016/01/01"),to =as.Date("2019/01/01") ,by='3 month')
 COL1 = "#3E9651"
 COL2 = "#DA7C30"
 COL3 = "#396AB1"
 
-COL1B = rgb(218,124,48,90,maxColorValue=256)
-COL2B = rgb(62,150,81,90,maxColorValue=256)
+COL2B = rgb(218,124,48,150,maxColorValue=256)
+COL1B = rgb(62,150,81,150,maxColorValue=256)
 
 
 
 graphics.off()
 quartz(width=6.3,height=4.5)
 plot.new()
-par(new=T,plt=c(0.1,0.95,0.55,0.95))
-plot(DATA_F$Date,DATA_F$Psi_min,type='n',axes=F,xlab='',ylab='')
+par(new=T,plt=c(0.1,0.95,0.56,0.95),xpd=F)
+plot(DATA_F$Date,DATA_F$Psi_min,type='n',axes=F,xlab='',ylab='',ylim=c(-5.7,0.2),yaxs='i')
 abline(v=datesAxis,h=seq(-5,0,1),col=gray(.8,1),lty='dotted')
 #grid()
 lines(DATA_F$Date,DATA_F$Psi_min,col=COL2)
 lines(DATA_F$Date,DATA_F$Psi_base,col=COL1)
 
-points(DATA_F$Date,DATA_F$MDpot_measured,bg=COL1B,pch=21,cex=0.8)
-points(DATA_F$Date,DATA_F$PDpot_measured,bg=COL2B,pch=21,cex=0.8)
+points(DATA_F$Date,DATA_F$MDpot_measured,bg=COL2B,pch=21,cex=0.8)
+points(DATA_F$Date,DATA_F$PDpot_measured,bg=COL1B,pch=21,cex=0.8)
 
-axis(2,las=2,cex.axis=cexx,lwd=0,lwd.ticks=0.5,tck=-0.02)
-axis(1,at=datesAxis,labels=F,lwd=0,lwd.ticks=0.5,tck=-0.02)
-
-#axis(1, at = seq.Date(from = as.Date("2016/01/01"),to =as.Date("2018/12/1") ,by='month'))
+axis(2,las=2,cex.axis=cexx,lwd=0,lwd.ticks=0.5,tck=-0.02,mgp = c(2,0.5,0))
+mtext(side=2,'Water potential (MPa)',line=1.5,cex=cexx)
+axis(1,at=datesAxis,labels=F,lwd=0,lwd.ticks=0.5,tck=-0.02,mgp=c(2,0.5,0))
 box(lwd=.5)
 
+legend(x= 17500,y=-3.15,bg='white',cex=0.7,  seg.len=1,
+       pt.bg = c(COL1B,NA,COL2B,NA),
+       lwd=c(1,1.5,1,1.5),
+       col = c("black",COL1,"black",COL2),
+       box.lwd=0.3,
+       pch = c(21,NA,21,NA),
+       lty = c(NA,1,NA,1),
+       legend= c(expression(paste('Measured ',Psi[lpd])),expression(paste('Simulated ' ,Psi[lpd])), expression(paste('Measured ',Psi[min])) ,expression(paste('Simulated ',Psi[min])))  )
 
-par(new=T,plt=c(0.15,0.25,0.6,0.65))
-plot(1:10,axes=F,xlab="",ylab="")
-box()
+data_eval = na.omit(data.frame(SIM =DATA_F$Psi_min,OBS= DATA_F$MDpot_measured))
+R2 = round(summary(lm(data_eval))$r.squared,digit=2)
+RMSE = round(rmse(sim =data_eval$SIM ,obs  = data_eval$OBS),digit=2) # midday 
+
+mtext(adj=0.5,col=COL2,side=3,font=2,cex=cexx,substitute(paste(italic(R^2),'=',R2,' ; RMSE=',RMSE),list(R2 = R2,RMSE =RMSE)))
+mtext(adj=0.5,col=COL2,side=3,font=2,cex=cexx,substitute(paste(italic(R^2),'=',R2,' ; RMSE=',RMSE),list(R2 = R2,RMSE =RMSE)))
+
+data_eval = na.omit(data.frame(SIM =DATA_F$Psi_base,OBS= DATA_F$PDpot_measured))
+R2 = round(summary(lm(data_eval))$r.squared,digit=2)
+RMSE = round(rmse(sim =data_eval$SIM ,obs  = data_eval$OBS),digit=2) # midday 
+
+mtext(adj=1,col=COL1,side=3,font=2,cex=cexx,substitute(paste(italic(R^2),'=',R2,' ; RMSE=',RMSE),list(R2 = R2,RMSE =RMSE)))
+mtext(adj=1,col=COL1,side=3,font=2,cex=cexx,substitute(paste(italic(R^2),'=',R2,' ; RMSE=',RMSE),list(R2 = R2,RMSE =RMSE)))
+mtext('A',adj=0,col=1,side=3,font=2,cex=0.8)
 
 
-par(new=T,plt=c(0.1,0.95,0.1,0.5))
-plot(DATA_F$Date,DATA_F$transpiration,type='n',axes=F,xlab='',ylab='',ylim=c(0,3.2))
+
+
+par(new=T,plt=c(0.1,0.95,0.1,0.49),xpd=F)
+plot(DATA_F$Date,DATA_F$transpiration,type='n',axes=F,xlab='',ylab='',ylim=c(-0.05,3.2),yaxs='i')
+
+
 abline(v=datesAxis,h=seq(0,3,.5),col=gray(.8,1),lty='dotted')
 lines(DATA_F$Date,DATA_F$transpiration,col=COL3)
 points(DATA_F$Date,DATA_F$E_Av.gap,pch=16,cex=.5,col=gray(.1,.5))
 box(lwd=.5)
 
+legend(x= 17450,y=2.95,bg='white',cex=0.7,  seg.len=1,
+       lwd=c(1,1.5),
+       col = c(gray(.1,.5),COL3),
+       box.lwd=0.3,
+       pch = c(16,NA),
+       lty = c(NA,1),
+       legend= c(expression(paste('Measured ')),expression(paste('Simulated'))))
 
-#datesAxis  = seq.Date(from = as.Date("2016/01/15"),to =as.Date("2018/12/15") ,by='2 month')
-axis(1, at = datesAxis,labels = format(datesAxis, "%b\n%Y"),cex.axis=cexx)
-axis(2,las=2,cex.axis=cexx)
 
 
-s
+
+axis(1,at=datesAxis,labels=format(datesAxis, "%b"),lwd=0,lwd.ticks=0.5,tck=-0.02,mgp=c(2,0.08,0),cex.axis=cexx)
+#axis(1, at = datesAxis,labels = format(datesAxis, "%b\n%Y"),cex.axis=cexx)
+axis(2,las=2,cex.axis=cexx,lwd=0,lwd.ticks=0.5,tck=-0.02,mgp = c(2,0.5,0))
+#arrows(x0 = 17000, x1 = 17500,y0=-6,y1=-6,lwd=5)  
+mtext(side=2,'Transpiration (mm)',line=1.7,cex=cexx)
+
+
+# add arrows for year
+par(xpd=T)
+library(shape)
+Arrows(x0 = as.numeric(datesAxis[1])+10, x1 = as.numeric(datesAxis[5])-10,y0=-0.52,y1=-0.52,lwd=0.8,code=3,
+       arr.type="triangle", arr.width=0.15,arr.length=0.12)  
+Arrows(x0 = as.numeric(datesAxis[5])+10, x1 = as.numeric(datesAxis[9])-10,y0=-0.52,y1=-0.52,lwd=0.8,code=3,
+       arr.type="triangle", arr.width=0.15,arr.length=0.12)  
+Arrows(x0 = as.numeric(datesAxis[9])+10, x1 = as.numeric(datesAxis[13])-10,y0=-0.52,y1=-0.52,lwd=0.8,code=3,
+       arr.type="triangle", arr.width=0.15,arr.length=0.12)  
+
+
+text('2016',y=-0.70,cex=cexx,x =  mean(c(as.numeric(datesAxis[1]), as.numeric(datesAxis[5]))))
+text('2017',y=-0.70,cex=cexx,x =  mean(c(as.numeric(datesAxis[5]), as.numeric(datesAxis[9]))))                                                                   
+text('2018',y=-0.70,cex=cexx,x =  mean(c(as.numeric(datesAxis[9]), as.numeric(datesAxis[13]))))                                                                   
+                                                                   
+
+data_eval = na.omit(data.frame(SIM =DATA_F$transpiration,OBS= DATA_F$E_Av.gap))
+R2 = round(summary(lm(data_eval))$r.squared,digit=2)
+RMSE = round(rmse(sim =data_eval$SIM ,obs  = data_eval$OBS),digit=2) # midday 
+
+mtext(adj=1,col=COL3,side=3,font=2,cex=cexx,substitute(paste(italic(R^2),'=',R2,' ; RMSE=',RMSE),list(R2 = R2,RMSE =RMSE)))
+mtext(adj=1,col=COL3,side=3,font=2,cex=cexx,substitute(paste(italic(R^2),'=',R2,' ; RMSE=',RMSE),list(R2 = R2,RMSE =RMSE)))
+
+
+
+mtext('B',adj=0,col=1,side=3,font=2,cex=0.8)
+
+
+

@@ -34,6 +34,14 @@ FMCall85$year=1985:2100
 
 
 
+FMCall45_2 = setNames(data.frame(matrix(nrow=length(1985:2100),ncol=length(MODELS_NAME)+1)),c('year',MODELS_NAME))
+FMCall85_2 = setNames(data.frame(matrix(nrow=length(1985:2100),ncol=length(MODELS_NAME)+1)),c('year',MODELS_NAME))
+
+FMCall45_2$year=1985:2100
+FMCall85_2$year=1985:2100
+
+
+
 
 for (MOD in 1:length(MODELS_NAME))
 {
@@ -54,17 +62,36 @@ for (MOD in 1:length(MODELS_NAME))
  FMCall45[22:116,(MOD+1)] = io_rcp45$yearly_FMCCanopy_min
  
  
+ FMCall85_2[1:21,(MOD+1)] = io_histo$yearly_nbDayLFMC_67
+ FMCall85_2[22:116,(MOD+1)] = io_rcp85$yearly_nbDayLFMC_67
+ 
+ FMCall45_2[1:21,(MOD+1)] = io_histo$yearly_nbDayLFMC_67
+ FMCall45_2[22:116,(MOD+1)] = io_rcp45$yearly_nbDayLFMC_67
+ 
+ 
+ 
+ 
 }  
 
 FMCall85[is.na(FMCall85)==T] <- 65
 FMCall45[is.na(FMCall45)==T] <- 65
 
 
+
+FMCall85_2[is.na(FMCall85_2)==T] <- 5
+FMCall45_2[is.na(FMCall45_2)==T] <- 5
+
+
 # remove last year (2100)
  FMCall85 = FMCall85[-nrow(FMCall85),]
  FMCall45 = FMCall45[-nrow(FMCall45),]
  
- plot(FMCall85$year,rowMeans(FMCall85[,-1]),'l',col=1,lwd=2,ylim=c(10,70))
+ FMCall85_2 = FMCall85_2[-nrow(FMCall85_2),]
+ FMCall45_2 = FMCall45_2[-nrow(FMCall45_2),]
+ 
+ 
+ 
+ plot(FMCall85$year,rowMeans(FMCall85[,-1]),'l',col=1,lwd=2,ylim=c(10,100))
  for (i in 2:14){
    lines(FMCall85$year, FMCall85[,i],col=i,lwd=0.3)
  }
@@ -81,44 +108,35 @@ FMCall45[is.na(FMCall45)==T] <- 65
  
  
  
- plot(FMCall45)
  
- 
- head(FMCall45)
- TS1 = FMCall45
- TS2 = FMCall45
- TS3 = FMCall45
- TS1[,2:14] <-  FMCall45[,2:14]<=67
- TS1[TS1==T] <-  1
- TS2[,2:14] <-  FMCall45[,2:14]<=57
- TS2[TS2==T] <-  1
- TS3[,2:14] <-  FMCall45[,2:14]<=43
- TS3[TS3==T] <-  1
-
- yall45 = list(FMCall45,TS1,TS2,TS3)
- 
- head(FMCall85)
- TS1 = FMCall85
- TS2 = FMCall85
- TS3 = FMCall85
- TS1[,2:14] <-  FMCall85[,2:14]<=67
- TS1[TS1==T] <-  1
- TS2[,2:14] <-  FMCall85[,2:14]<=57
- TS2[TS2==T] <-  1
- TS3[,2:14] <-  FMCall85[,2:14]<=43
- TS3[TS3==T] <-  1
- 
- yall85 = list(FMCall85,TS1,TS2,TS3)
- 
- 
-
- plot(yall85[[4]][,1],rowMeans(yall85[[4]][,2:14]),'l',col=1,lwd=2,ylim=c(0,1))
+ plot(FMCall85_2$year,rowMeans(FMCall85_2[,-1]),'l',col=1,lwd=2,ylim=c(0,130))
  for (i in 2:14){
-   lines(yall85[[4]][,1], yall85[[4]][,i],col=i,lwd=0.3)
+    lines(FMCall85_2$year, FMCall85_2[,i],col=i,lwd=0.3)
  }
- lines(FMCall85$year,rowMeans(FMCall85[,-1]),'l',col=1,lwd=2,ylim=c(0,70))
+ lines(FMCall85_2$year,rowMeans(FMCall85_2[,-1]),'l',col=1,lwd=2,ylim=c(0,70))
+ 
+ lines(FMCall45_2$year,rowMeans(FMCall45_2[,-1]),'l',col=2,lwd=2,ylim=c(0,70))
  
  
+ 
+ 
+ #plot(FMCall45)
+ 
+ 
+
+
+
+ yall85 = list(FMCall85,FMCall85_2)
+ yall45 = list(FMCall45,FMCall45_2)
+ 
+# 
+#  plot(yall85[[4]][,1],rowMeans(yall85[[4]][,2:14]),'l',col=1,lwd=2,ylim=c(0,1))
+#  for (i in 2:14){
+#    lines(yall85[[4]][,1], yall85[[4]][,i],col=i,lwd=0.3)
+#  }
+#  lines(FMCall85$year,rowMeans(FMCall85[,-1]),'l',col=1,lwd=2,ylim=c(0,70))
+#  
+#  
 
  # rm(list = ls(all.names = TRUE)) #will clear all objects includes hidden objects.
  # gc() #free up memrory and report the memory usage.
@@ -132,7 +150,7 @@ FMCall45[is.na(FMCall45)==T] <- 65
  library(caTools)
  
  t = FMCall45$year
- nvar = 4 #nvar =2 si ajout des proportions 
+ nvar = 2 #nvar =2 si ajout des proportions 
  nsc = 2 #nombre de scenar
  nclimSim=13
  
@@ -188,6 +206,10 @@ FMCall45[is.na(FMCall45)==T] <- 65
    y85=ymean[,,1]
    scenariosd=abs(y85-y45)
    
+   
+   
+   
+   
    isce=2
    Fact=(firesd[,,isce]+climatesd[,,isce]+modelsd[,,isce])/sqrt(firesd[,,isce]^2+climatesd[,,isce]^2+modelsd[,,isce]^2)
    modelUnc45 = 1.654*modelsd[,,isce]/Fact;modelClimateUnc45 = 1.654*(modelsd[,,isce]+climatesd[,,isce])/Fact;modelClimateFireUnc45 = 1.654*(modelsd[,,isce]+firesd[,,isce]+climatesd[,,isce])/Fact
@@ -211,11 +233,14 @@ FMCall45[is.na(FMCall45)==T] <- 65
    #for (ivar in c(1,2,3,4)) { #ivar=9
    ivar=1 
    offset=0
+   
+   
      #png(file=paste0(PATH,'figs/model_means2/',ts$varlab[ivar],"_uncertainty",anom,".png"),res=resval,width = widthv,height = heightv, units="mm")
-     #quartz(width=6.8,height=6.0)
+     quartz(width=6.2,height=2.7)
      #plot.new()
-     #par(new = "TRUE" ,plt = c(0.15,0.95,0.09,0.95),cex.axis = 1)
+     par(mfrow=c(1,2),mar=c(3,3,1,1.5))
      plot(t,y85[,ivar],ylim=c(0,max(y85pmcf[,ivar])+10),type='n',xlab=NA,ylab=NA,xaxs="i",yaxs="i",axes=F)
+     abline(v=2005,lty=2,lwd=.5)
      # model
      polygon(c(rev(t),t),c(rev(y85[,ivar]),y85pm[,ivar])-offset,col=modcol,border=F)
      polygon(c(rev(t),t),c(rev(y45[,ivar]),y45mm[,ivar])-offset,col=modcol,border=F)
@@ -228,9 +253,67 @@ FMCall45[is.na(FMCall45)==T] <- 65
      polygon(c(rev(t),t),c(rev(y85pm[,ivar]),y85pmc[,ivar])-offset,col=climcol,border=F);polygon(c(rev(t),t),c(rev(y45mm[,ivar]),y45mmc[,ivar])-offset,col=climcol,border=F)
      #lines(t,y85pmc[,ivar]-offset,col='black',cex=2);lines(t,y45mmc[,ivar]-offset,col='black',cex=2)
     
-     axis(1,lwd.ticks=.5,lwd=0)
-     axis(2,las=2,lwd.ticks=.5,lwd=0)
+     axis(1,lwd.ticks=.5,lwd=0,cex.axis=0.72,tck=-0.03,mgp=c(2,.3,0))
+     axis(2,las=2,lwd.ticks=.5,lwd=0,cex.axis=0.7,tck=-0.03,mgp=c(2,.6,0))
      box(lwd=.5)
+     mtext(side=1,cex=0.72,'Year',line=1.2)
+     mtext(side=2,cex=0.72,expression(CMC[min]*' (% dry mass)'),line=1.8)
+     mtext(side=3,cex=0.8,'A',adj=0,font=2)
+     
+     
+     
+     isce=2
+     Fact=(firesd[,,isce]+climatesd[,,isce]+modelsd[,,isce])/sqrt(firesd[,,isce]^2+climatesd[,,isce]^2+modelsd[,,isce]^2)
+     modelUnc45 = 1.654*modelsd[,,isce]/Fact;modelClimateUnc45 = 1.654*(modelsd[,,isce]+climatesd[,,isce])/Fact;modelClimateFireUnc45 = 1.654*(modelsd[,,isce]+firesd[,,isce]+climatesd[,,isce])/Fact
+     y45mm = y45 - modelUnc45
+     y45mmc = y45 - modelClimateUnc45
+     y45mmcf = y45 - modelClimateFireUnc45
+     
+     isce=1
+     Fact=(firesd[,,isce]+climatesd[,,isce]+modelsd[,,isce])/sqrt(firesd[,,isce]^2+climatesd[,,isce]^2+modelsd[,,isce]^2);
+     modelUnc85 = 1.654*modelsd[,,isce]/Fact;modelClimateUnc85 = 1.654*(modelsd[,,isce]+climatesd[,,isce])/Fact;modelClimateFireUnc85 = 1.654*(modelsd[,,isce]+firesd[,,isce]+climatesd[,,isce])/Fact
+     y85pm = y85 + modelUnc85
+     y85pmc = y85 + modelClimateUnc85
+     y85pmcf = y85 + modelClimateFireUnc85
+     
+     offset=0
+     resval = 100;widthv = 120;heightv = 120;
+     scecol=rgb(132,186,91,alpha=150,maxColorValue=256)
+     climcol=rgb(114,147,203,alpha=150,maxColorValue=256)
+     modcol =rgb(128,133,133,alpha=150,maxColorValue=256)
+     firecol='red'
+     #for (ivar in c(1,2,3,4)) { #ivar=9
+     ivar=1 
+     offset=0
+     
+     
+     
+     ivar=2 
+     offset=0
+     #png(file=paste0(PATH,'figs/model_means2/',ts$varlab[ivar],"_uncertainty",anom,".png"),res=resval,width = widthv,height = heightv, units="mm")
+     #quartz(width=6.8,height=6.0)
+     #plot.new()
+     #par(new = "TRUE" ,plt = c(0.15,0.95,0.09,0.95),cex.axis = 1)
+     plot(t,y85[,ivar],ylim=c(0,170),type='n',xlab=NA,ylab=NA,xaxs="i",yaxs="i",axes=F)
+     abline(v=2005,lty=2,lwd=.5)
+     # model
+     polygon(c(rev(t),t),c(rev(y85[,ivar]),y85pm[,ivar])-offset,col=modcol,border=F)
+     polygon(c(rev(t),t),c(rev(y45[,ivar]),y45mm[,ivar])-offset,col=modcol,border=F)
+     lines(t,y85pm[,ivar],col=climcol,cex=2)
+     lines(t,y45mm[,ivar],col=climcol,cex=2)
+     # scenario
+     polygon(c(rev(t),t),c(rev(y45[,ivar]),y85[,ivar])-offset,col=scecol,border=F) 
+     lines(t,y85[,ivar]-offset,col='black',cex=2);lines(t,y45[,ivar]-offset,col='black',cex=2)
+     # climat
+     polygon(c(rev(t),t),c(rev(y85pm[,ivar]),y85pmc[,ivar])-offset,col=climcol,border=F);polygon(c(rev(t),t),c(rev(y45mm[,ivar]),y45mmc[,ivar])-offset,col=climcol,border=F)
+     #lines(t,y85pmc[,ivar]-offset,col='black',cex=2);lines(t,y45mmc[,ivar]-offset,col='black',cex=2)
+     
+     axis(1,lwd.ticks=.5,lwd=0,cex.axis=0.72,tck=-0.03,mgp=c(2,.3,0))
+     axis(2,las=2,lwd.ticks=.5,lwd=0,cex.axis=0.7,tck=-0.03,mgp=c(2,.6,0))
+     box(lwd=.5)
+     mtext(side=1,cex=0.72,'Year',line=1.2)
+     mtext(side=2,cex=0.72,'FSL (days)',line=1.8)
+     mtext(side=3,cex=0.8,'B',adj=0,font=2)
      
      #lines(t,y85pmcf[,ivar]-offset,col='black',cex=2);lines(t,y45mmcf[,ivar]-offset,col='black',cex=2)
      # if (ivar==1) {mtext(side=3,'(a)',adj=0,cex=1.2)}
@@ -251,35 +334,35 @@ FMCall45[is.na(FMCall45)==T] <- 65
      #   print(c(ivar," FU =",signif(y45mmc[it1,ivar]-y45mmcf[it1,ivar], 3),"2090=",signif(y45mmc[it2,ivar]-y45mmcf[it2,ivar], 3)))
      #   print(c(ivar," CIV =",signif(y45mm[it1,ivar]-y45mmc[it1,ivar], 3),"2090=",signif(y45mm[it2,ivar]-y45mmc[it2,ivar], 3)))
      #   print(c(ivar," CMU =",signif(y45[it1,ivar]-y45mm[it1,ivar], 3),"2090=",signif(y45[it2,ivar]-y45mm[it2,ivar], 3)))
+     # # 
+     # # #lines(x,y,col='black',cex=2)
+     # # #mtext(side=3,paste0('Uncertainty partition (decadal mean)'),cex=1.5)
+     # mtext(side=2,ts$varlab[ivar],cex=1.5,line=2)
+     # #axis(1,at=x,labels=varlab,las=1);axis(2,las=1) #axis(1,cex.axis=1,tck=0.02,at=x,labels=c('N1','N10','N100','N500','N1000','BA'),line=-1.2,lwd=0,lwd.ticks =0.5,tck=0.035) #axis(2,cex.axis=1,tck=0,at=seq(0,ymax,20),labels=seq(0,ymax,20),line=-1.2,lwd=0)
+     # legend("topleft", bty="n",legend=c("Scenario","Clim. model","Clim. internal"),lwd=2,col=c(scecol,modcol,climcol,firecol))
      # 
-     # #lines(x,y,col='black',cex=2)
-     # #mtext(side=3,paste0('Uncertainty partition (decadal mean)'),cex=1.5)
-     mtext(side=2,ts$varlab[ivar],cex=1.5,line=2)
-     #axis(1,at=x,labels=varlab,las=1);axis(2,las=1) #axis(1,cex.axis=1,tck=0.02,at=x,labels=c('N1','N10','N100','N500','N1000','BA'),line=-1.2,lwd=0,lwd.ticks =0.5,tck=0.035) #axis(2,cex.axis=1,tck=0,at=seq(0,ymax,20),labels=seq(0,ymax,20),line=-1.2,lwd=0)
-     legend("topleft", bty="n",legend=c("Scenario","Clim. model","Clim. internal"),lwd=2,col=c(scecol,modcol,climcol,firecol))
+     # ierr=50;ndg=3;dpi=300
+     # ierr=it2
+     # uncertainty = signif((y85pmcf[ierr,ivar]-y85[ierr,ivar])/y85[ierr,ivar]*100,ndg) 
+     # fireuncertainty = signif((y85pmcf[ierr,ivar]-y85pmc[ierr,ivar])/y85[ierr,ivar]*100,ndg) 
+     # climateuncertainty = signif((y85pmc[ierr,ivar]-y85pm[ierr,ivar])/y85[ierr,ivar]*100,ndg) 
+     # cmuncertainty = signif((y85pm[ierr,ivar]-y85[ierr,ivar])/y85[ierr,ivar]*100,ndg) 
+     # climatchange=signif((y85[it2,ivar]-y85[it1,ivar])/y85[it1,ivar]*100,ndg)
+     # ymax=max(y85pmcf[,ivar])
+     # text(x=2012,y=ymax*0.16-offset,paste0('RCP 8.5 Climate Change: +',climatchange,'%'),cex=1,adj=0, col='red')
+     # text(x=2012,y=ymax*0.12-offset,paste0('Uncertainty: ',uncertainty,'% (CIV: ',climateuncertainty,'%, FU:',fireuncertainty,'%, CMU:',cmuncertainty,')'),cex=0.8,adj=0, col=Colors_line[1])
+     # 
+     # uncertainty = -signif((y45mmcf[ierr,ivar]-y45[ierr,ivar])/y45[ierr,ivar]*100,ndg) 
+     # fireuncertainty = - signif((y45mmcf[ierr,ivar]-y45mmc[ierr,ivar])/y45[ierr,ivar]*100,ndg) 
+     # climateuncertainty = - signif((y45mmc[ierr,ivar]-y45mm[ierr,ivar])/y45[ierr,ivar]*100,ndg) 
+     # cmuncertainty = - signif((y45mm[ierr,ivar]-y45[ierr,ivar])/y45[ierr,ivar]*100,ndg) 
+     # climatchange=signif((y45[it2,ivar]-y45[it1,ivar])/y45[it1,ivar]*100,ndg)
+     # ymax=max(y85pmcf[,ivar])
+     # text(x=2012,y=ymax*0.06-offset,paste0('RCP 4.5 Climate Change: +',climatchange,'%'),cex=1,adj=0, col='blue')
+     # text(x=2012,y=ymax*0.02-offset,paste0('Uncertainty: ',uncertainty,'% (CIV: ',climateuncertainty,'%, FU:',fireuncertainty,'%, CMU:',cmuncertainty,')'),cex=0.8,adj=0, col=Colors_line[2])
+     # box(lwd=0.5)
+     # dev.off()
+     # 
+     # 
+
      
-     ierr=50;ndg=3;dpi=300
-     ierr=it2
-     uncertainty = signif((y85pmcf[ierr,ivar]-y85[ierr,ivar])/y85[ierr,ivar]*100,ndg) 
-     fireuncertainty = signif((y85pmcf[ierr,ivar]-y85pmc[ierr,ivar])/y85[ierr,ivar]*100,ndg) 
-     climateuncertainty = signif((y85pmc[ierr,ivar]-y85pm[ierr,ivar])/y85[ierr,ivar]*100,ndg) 
-     cmuncertainty = signif((y85pm[ierr,ivar]-y85[ierr,ivar])/y85[ierr,ivar]*100,ndg) 
-     climatchange=signif((y85[it2,ivar]-y85[it1,ivar])/y85[it1,ivar]*100,ndg)
-     ymax=max(y85pmcf[,ivar])
-     text(x=2012,y=ymax*0.16-offset,paste0('RCP 8.5 Climate Change: +',climatchange,'%'),cex=1,adj=0, col='red')
-     text(x=2012,y=ymax*0.12-offset,paste0('Uncertainty: ',uncertainty,'% (CIV: ',climateuncertainty,'%, FU:',fireuncertainty,'%, CMU:',cmuncertainty,')'),cex=0.8,adj=0, col=Colors_line[1])
-     
-     uncertainty = -signif((y45mmcf[ierr,ivar]-y45[ierr,ivar])/y45[ierr,ivar]*100,ndg) 
-     fireuncertainty = - signif((y45mmcf[ierr,ivar]-y45mmc[ierr,ivar])/y45[ierr,ivar]*100,ndg) 
-     climateuncertainty = - signif((y45mmc[ierr,ivar]-y45mm[ierr,ivar])/y45[ierr,ivar]*100,ndg) 
-     cmuncertainty = - signif((y45mm[ierr,ivar]-y45[ierr,ivar])/y45[ierr,ivar]*100,ndg) 
-     climatchange=signif((y45[it2,ivar]-y45[it1,ivar])/y45[it1,ivar]*100,ndg)
-     ymax=max(y85pmcf[,ivar])
-     text(x=2012,y=ymax*0.06-offset,paste0('RCP 4.5 Climate Change: +',climatchange,'%'),cex=1,adj=0, col='blue')
-     text(x=2012,y=ymax*0.02-offset,paste0('Uncertainty: ',uncertainty,'% (CIV: ',climateuncertainty,'%, FU:',fireuncertainty,'%, CMU:',cmuncertainty,')'),cex=0.8,adj=0, col=Colors_line[2])
-     box(lwd=0.5)
-     dev.off()
-     
-   }
- 
- 

@@ -26,7 +26,7 @@ modeling_options  <- create.modeling.options(compOptionsForEvapo = "Fast",
                                              PedoTransferFormulation="VG") 
 
 simulation_parameters <- create.simulation.parameters(startYearSimulation = 2016,                       
-                                                      endYearSimulation = 2018,
+                                                      endYearSimulation = 2016,
                                                       mainDir = mainDir,
                                                       outputType = 'diagnostic_subdaily',
                                                       overWrite = T,

@@ -38,7 +38,7 @@ MODELS_NAME <-  c("CSIRO_RCA4",
 
 
 cores=detectCores()
-cl <- makeCluster(cores[1]-3) #not to overload the computer
+cl <- makeCluster(cores[1]-1) #not to overload the computer
 registerDoParallel(cl)
 
 
@@ -85,6 +85,13 @@ vegetation_parameters <- create.vegetation.parameters(filePath = vegetationParam
                                                       stand_parameters = stand_parameters, 
                                                       soil_parameter = soil_parameters,
                                                       modeling_options = modeling_options)
+
+# Parameters adjusted all years
+vegetation_parameters$vol_Stem <- 10
+vegetation_parameters$LDMC = 567
+vegetation_parameters$PiFullTurgor_Leaf = -2.67
+vegetation_parameters$epsilonSym_Leaf = 15
+vegetation_parameters$apoFrac_Leaf = (1-0.56)
 
 run.SurEau_Ecos(modeling_options = modeling_options ,
                 simulation_parameters = simulation_parameters, 
@@ -141,6 +148,12 @@ foreach(MOD=(1:length(MODELS_NAME)),.packages=c('lubridate','insol')) %dopar% {
                                                         stand_parameters = stand_parameters, 
                                                         soil_parameter = soil_parameters,
                                                         modeling_options = modeling_options)
+  # Parameters adjusted all years
+  vegetation_parameters$vol_Stem <- 10
+  vegetation_parameters$LDMC = 567
+  vegetation_parameters$PiFullTurgor_Leaf = -2.67
+  vegetation_parameters$epsilonSym_Leaf = 15
+  vegetation_parameters$apoFrac_Leaf = (1-0.56)
   
   run.SurEau_Ecos(modeling_options = modeling_options ,
                   simulation_parameters = simulation_parameters, 
@@ -194,6 +207,13 @@ foreach(MOD=(1:length(MODELS_NAME)),.packages=c('lubridate','insol')) %dopar% {
                                                         soil_parameter = soil_parameters,
                                                         modeling_options = modeling_options)
   
+  # Parameters adjusted all years
+  vegetation_parameters$vol_Stem <- 10
+  vegetation_parameters$LDMC = 567
+  vegetation_parameters$PiFullTurgor_Leaf = -2.67
+  vegetation_parameters$epsilonSym_Leaf = 15
+  vegetation_parameters$apoFrac_Leaf = (1-0.56)
+  
   run.SurEau_Ecos(modeling_options = modeling_options ,
                   simulation_parameters = simulation_parameters, 
                   climate_data = climate_data,
@@ -203,7 +223,7 @@ foreach(MOD=(1:length(MODELS_NAME)),.packages=c('lubridate','insol')) %dopar% {
   
 }
 
-# 
+ 
 # filename = paste0(mainDir,'/Figure_7_projections/FMC_projected/',MODELS_NAME[MOD],'/FMC_rcp85.csv')
 # DATA      = read.csv(filename,header=T, dec='.', sep="")
 # head(DATA)
