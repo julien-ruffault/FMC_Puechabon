@@ -3,7 +3,7 @@
 #
 #Authors : Julien Ruffault (julien.ruff@gmail.com)
 #          Nicolas Martin (nicolas.martin@inrae.fr)
-# Date   : 24/01/2022
+# Date   : 31/03/2022
 # Script to Launch global sensitivity analyses on FMC at Peuchabon site
 # Codes and procedures are derived from the sensitivity analysis in Ruffault et al. submitted,GMD
 # Selected parameters : 'P50_VC_Leaf'
@@ -12,9 +12,10 @@
 #                       "PiFullTurgor"
 #                       "Q10_1_gmin"
 #                       "TPhase_gmin"
+#                       
+#   Ici on compare des simus avec ou sans la mortalité des branches.foliage pour voir cet effet à long terme et comme cela change l'effet                     
+#                       
 
-
-  
 
 # clean environment
 rm(list=ls(all=TRUE));gc()
@@ -23,7 +24,7 @@ rm(list=ls(all=TRUE));gc()
 mainDir <-   dirname(dirname(rstudioapi::getActiveDocumentContext()$path))  
 source(paste0(mainDir,'/functions/load.SurEau_Ecos.R')) 
 #define directory where inputs parameters are stocked 
-directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC_2017/"
+directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC/"
 mainDirOutpout =directoryToRefSimu
 
 
@@ -54,7 +55,7 @@ params=c('P50_VC_Leaf',
 
 
 percentV = 20/100
-N <- 100 # number for initial sampling / about 30000-100000 for full models
+N <- 200 # number for initial sampling / about 30000-100000 for full models
 k <- length(params) # number of parameters
 
 
@@ -112,8 +113,8 @@ foreach(i=1:nrow(PARAMS),.packages=c('lubridate','insol')) %dopar% {
   print(i)
   output_path = paste0(Out_dir,'/SA_FMC_',i,'.csv')
   # 
-  simulation_parameters <- create.simulation.parameters(startYearSimulation = 2018,
-                                                        endYearSimulation = 2018,
+  simulation_parameters <- create.simulation.parameters(startYearSimulation = 2017,
+                                                        endYearSimulation = 2017,
                                                         mainDir= mainDir,
                                                         resolutionOutput = "yearly",
                                                         outputType = 'yearly_forFMC',
@@ -133,7 +134,7 @@ foreach(i=1:nrow(PARAMS),.packages=c('lubridate','insol')) %dopar% {
   
   
   #climate_data$WS_mean <- 1
-
+  
   stand_parameters <- create.stand.parameters(LAImax=2.2,lat = 48.73, lon = 6.23)
   #stand_parameters <- create.stand.parameters(LAImax=PARAMS[,"LAImax"][i],lat = 48.73, lon = 6.23)
   #stand_parameters <- create.stand.parameters(LAImax=6,lat = 48.73, lon = 6.23)
@@ -146,9 +147,9 @@ foreach(i=1:nrow(PARAMS),.packages=c('lubridate','insol')) %dopar% {
   vegFile$P50_VC_Leaf=PARAMS[,"P50_VC_Leaf"][i]
   vegFile$P50_VC_Stem = PARAMS[,"P50_VC_Leaf"][i]
   
-  vegFile$apoFrac_Leaf = PARAMS[,"apoFrac_Leaf"][i]
+  
   vegFile$epsilonSym_Leaf = PARAMS[,"epsilon_Sym"][i]
-  vegFile$epsilonSym_Stem = PARAMS[,"epsilon_Sym"][i]
+  vegFile$EpsilonSymp_Stem = PARAMS[,"epsilon_Sym"][i]
   vegFile$PiFullTurgor_Leaf = PARAMS[,"PiFullTurgor"][i]
   vegFile$PiFullTurgor_Trunk = PARAMS[,"PiFullTurgor"][i]
   vegFile$Q10_1_gmin = PARAMS[,"Q10_1_gmin"][i]
@@ -163,7 +164,7 @@ foreach(i=1:nrow(PARAMS),.packages=c('lubridate','insol')) %dopar% {
   soil_parameters  <- create.soil.parameters(listOfParameters = soilFile, modeling_options=modeling_options)
   vegetation_parameters <- create.vegetation.parameters(listOfParameters= vegFile, stand_parameters = stand_parameters, soil_parameter = soil_parameters,modeling_options = modeling_options)
   
-
+  
   run.SurEau_Ecos(modeling_options = modeling_options ,
                   simulation_parameters = simulation_parameters, 
                   climate_data = climate_data,
@@ -181,43 +182,23 @@ foreach(i=1:nrow(PARAMS),.packages=c('lubridate','insol')) %dopar% {
 # plot(DATA$Psi_LApo)
 # 
 
-# directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC_2018/"
-# mainDirOutpout =directoryToRefSimu
-# Out_dir <- file.path(mainDirOutpout)
-# 
-# # quick analyses to check results 
-# Y1 = NULL
-# Y2 = NULL
-# Y3 = NULL
-# for (i in 1:nrow(PARAMS))
-# {
-#   io =read.csv(paste0(Out_dir,'/SA_FMC_',i,'.csv'),header=T, dec='.',sep="")
-#   Y1[i]  = io$yearly_FMCCanopy_min
-#   Y2[i]  = io$yearly_nbDayLFMC_67
-#   Y3[i]  = io$yearly_LFMC_min
-# }
-# 
-# 
-
-
-
-directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC/"
-mainDirOutpout =directoryToRefSimu
-Out_dir <- file.path(mainDirOutpout)
-
 # quick analyses to check results 
-Z1 = NULL
-Z2 = NULL
-Z3 = NULL
+Y1 = NULL
+Y2 = NULL
+Y3 = NULL
 for (i in 1:nrow(PARAMS))
 {
   io =read.csv(paste0(Out_dir,'/SA_FMC_',i,'.csv'),header=T, dec='.',sep="")
-  Z1[i]  = io$yearly_FMCCanopy_min
-  Z2[i]  = io$yearly_nbDayLFMC_67
-  Z3[i]  = io$yearly_LFMC_min
+  Y1[i]  = io$yearly_FMCCanopy_min
+  Y2[i]  = io$yearly_nbDayLFMC_67
+  Y3[i]  = io$yearly_nbDayLFMC_57
 }
 
-A <- sobol_indices(Y = Y3, N = N, params = params, order="first",boot = F)
+A <- sobol_indices(Y = Y1, N = N, params = params, order="first",boot = F)
 plot(A)
-A <- sobol_indices(Y = Z1, N = N, params = params, order="first",boot = F)
+A <- sobol_indices(Y = Y2, N = N, params = params, order="first",boot = F)
 plot(A)
+
+plot_scatter(Y = Y1, N = N, data = PARAMS, params =params)
+plot_scatter(Y = Y2, N = N, data = PARAMS, params =params)
+0
