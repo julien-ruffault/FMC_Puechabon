@@ -170,6 +170,10 @@ new.WByearly <- function(){
   WByearly$FMCCanopy_min = 500
   WByearly$LFMC_min = 500
   
+  WByearly$nbDayLFMC_67 = 0
+  WByearly$nbDayLFMC_57 = 0
+  WByearly$nbDayLFMC_43 = 0
+  
   WByearly$dayOfDeath = NA
   WByearly$dayOfStomatalClosure = NA
   return(WByearly)
@@ -243,6 +247,10 @@ update.WByearly <- function(WByearly,WBdaily,dayOfDeath,WBveg,DAY){
   
   WByearly$FMCCanopy_min = min(WByearly$FMCCanopy_min,WBdaily$FMCCanopy_min)
   WByearly$LFMC_min      = min(WByearly$LFMC_min,WBdaily$LFMC_min)
+  
+  WByearly$nbDayLFMC_67 =   WByearly$nbDayLFMC_67 + sum(WBdaily$LFMC_min<=67)
+  WByearly$nbDayLFMC_57 =   WByearly$nbDayLFMC_57 + sum(WBdaily$LFMC_min<=57)
+  WByearly$nbDayLFMC_43 =   WByearly$nbDayLFMC_43 + sum(WBdaily$LFMC_min<=43)
   
   
   if (!missing(dayOfDeath))

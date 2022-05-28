@@ -1,7 +1,10 @@
 #---------------------------------------------------------------------------------------
-#Figure 3
+# Script for plottinng Figure 4 of LFMC Puechabon pape : LFMC validation 
+# Date : 02/02/2022 (!)
+# Authors : nicolas martin (nicolas.martin@inrae.fr)
+#           julien ruffault (julien.ruffault@inrae.fr)
 #---------------------------------------------------------------------------------------
-# RCode for plottinng Figure 3 of LFMC Puechabon paper.
+
 # The script read the simulations runs previously written by another script (Launcher_Puechabon_VG_FMC_validFMC)
 # the script plot the figure 3
 
@@ -15,14 +18,14 @@ gc()            # Clear memory
 mainDir <-   dirname(dirname(rstudioapi::getActiveDocumentContext()$path))  
 
 #Data reading
-datPsiFMC = read.csv("validation_data/FMC Puéchabon 2016-2018.csv", sep=";", dec=",", h=T)
+datPsiFMC = read.csv(paste0(mainDir,"/validation_data/FMC Puéchabon 2016-2018.csv"), sep=";", dec=",", h=T)
 datPsiFMC = datPsiFMC[-c(13,16,18),]
 datPsiFMC = datPsiFMC[datPsiFMC[,"Include"]==1,]
 datadate = as.Date(strptime(datPsiFMC[,"Date"],format="%d/%m/%Y"))
 datPsiFMC$Date <-datadate
 
 #SurEau outputs reading
-output_path_measured <-  paste0(mainDir,'/scripts_base_simulations/Puechabon_VG_LFMC_Measured.csv')
+output_path_measured <-  paste0(mainDir,'/Figure_4_validation_LFMC/Puechabon_VG_LFMC_Measured.csv')
 DATA      = read.csv(output_path_measured,header=T, dec='.', sep="")
 DATA$Time = as.POSIXct(DATA$Time,format='%Y-%m-%d/%H:%M:%S')
 DATA$Date = as.Date(DATA$Time,format='%j/%Y')

@@ -139,3 +139,7 @@ yearly_ETP;WByearly;ETP;1;1
 yearly_VPDmax;WByearly;VPDmax;1;2
 yearly_dayOfDeath;WByearly;dayOfDeath;1;1
 yearly_dayOfStomatalClosure;WByearly;dayOfStomatalClosure;1;1
+yearly_nbDayLFMC_67;WByearly;nbDayLFMC_67;1;1
+yearly_nbDayLFMC_57;WByearly;nbDayLFMC_57;1;1
+yearly_nbDayLFMC_43;WByearly;nbDayLFMC_43;1;1
+
