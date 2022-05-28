@@ -38,7 +38,14 @@ stand_parameters      <- create.stand.parameters(LAImax = 2.2, lat = 43.75, lon 
 climate_data          <- create.climate.data(filePath = climateData_path, 
                                              modeling_options = modeling_options,
                                              simulation_parameters = simulation_parameters) #
-soil_parameters       <- create.soil.parameters(filePath = soilParameters_path, modeling_options = modeling_options, offSetPsoil = .3)
+
+
+#Update to be consistent withh M&M description
+TTT = read.soil.file(filePath=soilParameters_path, modeling_options=modeling_options)
+TTT$depth3<-4.6
+TTT$RFC_3<- 95
+
+soil_parameters       <- create.soil.parameters(listOfParameters =TTT, modeling_options = modeling_options, offSetPsoil = .3)
 
 vegetation_parameters <- create.vegetation.parameters(filePath = vegetationParameters_path, 
                                                       stand_parameters = stand_parameters, 
