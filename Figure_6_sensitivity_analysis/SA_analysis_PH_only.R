@@ -23,7 +23,7 @@ rm(list=ls(all=TRUE));gc()
 mainDir <-   dirname(dirname(rstudioapi::getActiveDocumentContext()$path))  
 source(paste0(mainDir,'/functions/load.SurEau_Ecos.R')) 
 #define directory where inputs parameters are stocked 
-directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC_2017/"
+directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC/"
 mainDirOutpout =directoryToRefSimu
 
 
@@ -50,7 +50,8 @@ params=c('P50_VC_Leaf',
          "PiFullTurgor",
          "Q10_1_gmin",
          "TPhase_gmin",
-         "apoFrac_Leaf")
+         "apoFrac_Leaf",
+         "P50_gs")
 
 
 percentV = 20/100
@@ -65,7 +66,7 @@ conf <- 0.95
 
 # for parallelistation 
 cores=detectCores()
-cl <- makeCluster(cores[1]-2) #not to overload the computer
+cl <- makeCluster(cores[1]-1) #not to overload the computer
 registerDoParallel(cl)
 
 #SWCmean <- 147
@@ -82,7 +83,7 @@ print(paste0('number of simulations : ',nrow(PARAMS)))
 #PARAMS[, "SWC"]          <- qunif(PARAMS[, "SWC"], SWCmean - SWCmean * percentV, SWCmean + SWCmean * percentV)
 PARAMS[, "P50_VC_Leaf"]  <- qunif(PARAMS[, "P50_VC_Leaf"] , vegFile$P50_VC_Leaf + vegFile$P50_VC_Leaf * percentV, vegFile$P50_VC_Leaf - vegFile$P50_VC_Leaf * percentV)
 PARAMS[, "gmin20"]       <- qunif(PARAMS[, "gmin20"]      , vegFile$gmin20 - percentV * vegFile$gmin20, vegFile$gmin20 + percentV * vegFile$gmin20)
-#PARAMS[, "P50_gs"]       <- qunif(PARAMS[, "P50_gs"]      , vegFile$P50_gs + vegFile$P50_gs * percentV, vegFile$P50_gs - vegFile$P50_gs * percentV)
+PARAMS[, "P50_gs"]       <- qunif(PARAMS[, "P50_gs"]      , vegFile$P50_gs + vegFile$P50_gs * percentV, vegFile$P50_gs - vegFile$P50_gs * percentV)
 PARAMS[, "epsilon_Sym"]  <- qunif(PARAMS[, "epsilon_Sym"] , vegFile$epsilonSym_Leaf - percentV * vegFile$epsilonSym_Leaf, vegFile$epsilonSym_Leaf + percentV * vegFile$epsilonSym_Leaf)
 PARAMS[, "PiFullTurgor"] <- qunif(PARAMS[, "PiFullTurgor"], vegFile$PiFullTurgor_Leaf + percentV * vegFile$PiFullTurgor_Leaf, vegFile$PiFullTurgor_Leaf - percentV * vegFile$PiFullTurgor_Leaf)
 PARAMS[, "apoFrac_Leaf"] <- qunif(PARAMS[, "apoFrac_Leaf"], vegFile$apoFrac_Leaf - percentV * vegFile$apoFrac_Leaf, vegFile$apoFrac_Leaf + percentV * vegFile$apoFrac_Leaf)
@@ -112,8 +113,8 @@ foreach(i=1:nrow(PARAMS),.packages=c('lubridate','insol')) %dopar% {
   print(i)
   output_path = paste0(Out_dir,'/SA_FMC_',i,'.csv')
   # 
-  simulation_parameters <- create.simulation.parameters(startYearSimulation = 2018,
-                                                        endYearSimulation = 2018,
+  simulation_parameters <- create.simulation.parameters(startYearSimulation = 2017,
+                                                        endYearSimulation = 2017,
                                                         mainDir= mainDir,
                                                         resolutionOutput = "yearly",
                                                         outputType = 'yearly_forFMC',
@@ -141,7 +142,7 @@ foreach(i=1:nrow(PARAMS),.packages=c('lubridate','insol')) %dopar% {
   vegFile$gmin20=PARAMS[,"gmin20"][i]
   vegFile$gmin_T=PARAMS[,"gmin20"][i]
   
-  #vegFile$P50_gs = PARAMS[,"P50_gs"][i]
+  vegFile$P50_gs = PARAMS[,"P50_gs"][i]
   
   vegFile$P50_VC_Leaf=PARAMS[,"P50_VC_Leaf"][i]
   vegFile$P50_VC_Stem = PARAMS[,"P50_VC_Leaf"][i]
@@ -217,7 +218,7 @@ for (i in 1:nrow(PARAMS))
   Z3[i]  = io$yearly_LFMC_min
 }
 
-A <- sobol_indices(Y = Y3, N = N, params = params, order="first",boot = F)
+A <- sobol_indices(Y = Z3, N = N, params = params, order="first",boot = F)
 plot(A)
 A <- sobol_indices(Y = Z1, N = N, params = params, order="first",boot = F)
 plot(A)

@@ -12,7 +12,8 @@ gc()            # Clear memory
 # Set paths  -----------------------------------------------------------------
 mainDir <-   dirname(dirname(rstudioapi::getActiveDocumentContext()$path))  
 #
-library("png")
+library(png)
+library(lubridate)
 #-----------------------------------------------------
 #Read model outputs : "adjusted all years Puechabon.
 output_path_adjAll <-  paste0(mainDir,'/Figure_4_validation_LFMC/Puechabon_VG_LFMC_AdjustedAllYears.csv')
@@ -22,7 +23,7 @@ DATA$Time = as.POSIXct(DATA$Time,format='%Y-%m-%d/%H:%M:%S')
 #-----------------------------------------------------
 # Read an combine the  NDVI data
 #-----------------------------------------------------
-pp <- readPNG(paste0(mainDir,"/Figure_5_validation_CanopyMC/defol.png"))
+pp <- readPNG(paste0(mainDir,"/Figure_5_validation_CanopyMC/defol4.png"))
 
 datNDVI=read.csv(paste0(mainDir,"/validation_data/NDVI-PRI_2013-2019.csv"),  sep=";", dec=".", h=T, skip=1)
 dateNDVI=as.Date(strptime(datNDVI$Date, format="%d/%m/%Y"))
@@ -114,8 +115,9 @@ COL4 = rgb(171,104,87,maxColorValue=256)
 
 #Plot the plots
 
-
+######aaa ####
 quartz(width=6.3,height=4.5)
+#quartz(width=9.3,height=9)
 plot.new()
 par(new=T,plt=c(0.1,0.9,0.55,0.95),xpd=F)
 plot(DATA_day$Date,DATA_day$LFMC_min,type='n',col=1, ylim=c(38,81), ylab="", xlab="",axes=F,yaxs='i')
@@ -123,7 +125,7 @@ abline(v=datesAxis,h=seq(30,80,10),col=gray(.8,1),lty='dotted')
 #polygon(x=c(DATA_day$Date, rev(DATA_day$Date)), y=c(DATA_day$LFMC_min, rev(DATA_day$FMC_min)), col=rgb(218,124,48,150,maxColorValue=256),border=NA)
 polygon(x=c(DATA_day$Date, rev(DATA_day$Date)), y=c(DATA_day$LFMC_min, rev(DATA_day$FMC_min)), col=gray(0.5,0.5),border=NA)
 lines(DATA_day$Date,DATA_day$FMC_min,col=1)
-lines(DATA_day$Date,DATA_day$LFMC_min,col=COL2)
+lines(DATA_day$Date,DATA_day$LFMC_min,col=COL2,lty=2)
 
 axis(2,las=2,cex.axis=cexx,lwd=0,lwd.ticks=0.5,tck=-0.02,mgp = c(2,0.5,0))
 mtext(side=2,'Fuel moisture content (%)',line=2,cex=cexx)
@@ -138,15 +140,16 @@ par(new=T)
 plot(DATA_day$Date, DATA_day$PLCleaf,type='n', ylim=c(-5,102.5), ylab="", xlab="", las=1,axes=F,yaxs='i')
 lines(DATA_day$Date, DATA_day$PLCleaf,col='firebrick3')
 axis(4, las=2,cex.axis=cexx,lwd=0,lwd.ticks=0.5,tck=-0.02,mgp = c(2,0.5,0),at=seq(0,100,25))
-mtext(side=4,'Percent  of conductance (%)',line=1.5,cex=cexx)
+mtext(side=4,'Percent Loss  of conductance (%)',line=1.5,cex=cexx)
 #mtext("canopy mortality", side=4, col=2, line=2, cex=.8)
 
-legend(x= datesAxis[10],y=40,bg='white',cex=0.7,  seg.len=1,
+legend(x= datesAxis[10],y=40,bg='white',cex=0.7,
        lwd=1.5,
+       seg.len=2,
        col = c(COL2,1,'firebrick3'),
        box.lwd=0.3,
-       lty = 1,
-       legend= c(expression(paste(LFMC[min])),expression(paste(FMC[Can])), expression(paste('Cavitation'))))
+       lty = c(2,1,1),
+       legend= c(expression(paste(LFMC[min])),expression(paste(CFMC)), expression(paste(PLC[Leaf]))))
 
 
 
@@ -205,4 +208,18 @@ mtext('B',adj=0,col=1,side=3,font=2,cex=0.8)
  mtext("summer 2017", side=3,adj=0.1,cex=0.8,)
  #mtext("(C)", 3, line=0, adj=0)
 
+ library(pBrackets)
+ library(shape)
 
+ par((lheight=.8))
+ text('Dead\nfoliage',x=0.48,y=0.87,col='white',cex=.8,font=2) 
+ 
+ abline(v=.592,col='black',lwd=2)
+ Arrows(x0=0.48,x1=0.5,y0=0.75,y1=0.52,col="white",arr.type="triangle",lwd=2,arr.length = 0.14,arr.width=0.14)
+ Arrows(x0=0.42,x1=0.35,y0=0.75,y1=0.62,col="white",arr.type="triangle",lwd=2,arr.length = 0.14,arr.width=0.14)
+ Arrows(x0=0.38,x1=0.28,y0=0.82,y1=0.78,col="white",arr.type="triangle",lwd=2,arr.length = 0.14,arr.width=0.14)
+ 
+ 
+ brackets(y=0.5,y2=0.8,x1=0.6,x2=0.6,col="white",ticks=-0.5)
+ 
+ 

@@ -13,11 +13,13 @@
 rm(list = ls()) # Clear environment
 gc()            # Clear memory
 
+library(lubridate)
+
 # Set paths  -----------------------------------------------------------------
 mainDir <-   dirname(dirname(rstudioapi::getActiveDocumentContext()$path))  
 
 # reading data fro LFMC measurements 
-datPsiFMC = read.csv(paste0(mainDir,"/validation_data/FMC Puéchabon 2016-2018.csv"), sep=";", dec=",", h=T)
+datPsiFMC = read.csv(paste0(mainDir,"/validation_data/FMC Puechabon 2016-2018.csv"), sep=";", dec=",", h=T)
 datPsiFMC = datPsiFMC[-c(13,16,18),]
 datPsiFMC = datPsiFMC[datPsiFMC[,"Include"]==1,]
 datadate = as.Date(strptime(datPsiFMC[,"Date"],format="%d/%m/%Y"))
@@ -80,7 +82,7 @@ legend(x= datesAxis[9],y=56.15,bg='white',cex=0.7,  seg.len=1,
        box.lwd=0.3,
        pch = c(22,NA,22,NA),
        lty = c(NA,1,NA,1),
-       legend= c(expression(paste('Measured ',LFMC[max])),expression(paste('Simulated ' ,LFMC[max])), expression(paste('Measured ',LFMC[min])) ,expression(paste('Simulated ',LFMC[min])))  )
+       legend= c(expression(paste('Measured ',LFMC[pd])),expression(paste('Simulated ' ,LFMC[pd])), expression(paste('Measured ',LFMC[md])) ,expression(paste('Simulated ',LFMC[md])))  )
 
 AAA = merge(data.frame(Date= datadate,OBS =datPsiFMC$FMC_Pd.Control*100), DATA_day[,c('Date','LFMC_base')])
 data_eval = na.omit(data.frame(SIM =AAA$LFMC_base,OBS= AAA$OBS))

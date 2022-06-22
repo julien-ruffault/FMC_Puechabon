@@ -74,7 +74,7 @@ Out_dir2 <- file.path(mainDirOutpout2)
 
 
 PARAMS2 =   io =read.csv(paste0(Out_dir2,'/PARAMS_.csv'),header=T, dec='.',sep=",")
-N2= 30
+N2= 100
 
 params2=colnames(PARAMS2)
 Y1 = NULL
@@ -94,7 +94,7 @@ conf <- 0.95
 IND2[[1]] <- sobol_indices(Y = Y1, N = N2, params = params2, order="first",boot = F)
 IND2[[2]] <- sobol_indices(Y = Y2, N = N2, params = params2, order="first",boot = F)
 
-
+plot_scatter(Y = Y1, N = N2, data = PARAMS2, params =params2)
 
 plot(IND1[[1]])
 plot(IND1[[2]])
@@ -110,8 +110,8 @@ plot(IND2[[2]])
 #GRILLE_H = c(0.11,0.48,0.55,0.92)
 
 
-ORDER = params[c(1,2,3,4,5,6,7)]
-ORDER2 = params2[c(1,2,3,4,5,6,7,8,9,10)]
+ORDER = params[c(1,2,3,4,5,6,7,8)]
+ORDER2 = params2[c(1,2,3,4,5,6,7,10,8,9)]
 
 
 mylist1=NULL
@@ -159,6 +159,8 @@ plot(1:2,1:2,col=CCC,pch=16,cex=5)
 
 
 
+# FIGURE ####
+graphics.off()
 quartz(height=4,width=6.3)
 plot.new()
 # par(plt=c(0.7,0.95,0.7,0.95),lheight=.85)
@@ -175,7 +177,7 @@ plot.new()
 par(new=T,plt=c(0.1,.95,0.6,0.95),lwd=0.5,xpd=F)
 AAA = multistack.bar(mylist1,col=F,border=F,betweenspace = 2.5, withinspace = 0.25,beside=T,axes=F,ylim=c(0,0.67))
 
-segments(x0=rep(-10,6),x1 = rep(31.5,6),y0=seq(.1,.7,.1),y1=seq(.1,.7,.1),lty=3,lwd=0.5,col='grey70')
+segments(x0=rep(-10,6),x1 = rep(36.15,6),y0=seq(.1,.7,.1),y1=seq(.1,.7,.1),lty=3,lwd=0.5,col='grey70')
 #abline(h=seq(.1,.6,.1),lty=3,lwd=0.5,col='grey70')
 
 
@@ -183,20 +185,20 @@ AAA = multistack.bar(mylist1,col=CCC,border=F,lwd=.5,betweenspace = 2.5, withins
 axis(2,las=2,cex.axis=0.7,tck=-0.02,lwd=0.5,mgp=c(0,0.4,0))
 #box(lwd=.5)
 
-axis(1,cex.axis=0.7,tck=-0.03,at=c(-10,AAA[seq(1,14,2)]+0.65),lwd=0,lwd.ticks=.5,labels=F,xlim=c(0,10))
-axis(1,cex.axis=0.7,tck=-0,at=c(-10,31.5),lwd=0.5,labels=F,xlim=c(0,10))
+axis(1,cex.axis=0.7,tck=-0.03,at=c(-10,AAA[seq(1,16,2)]+0.65),lwd=0,lwd.ticks=.5,labels=F,xlim=c(0,10))
+axis(1,cex.axis=0.7,tck=-0,at=c(-10,37),lwd=0.5,labels=F,xlim=c(0,10))
 mtext(side=3,'A',cex=0.8,line=-0,font=2,adj=0)
 #legend(x=66,y=0.45,bg='white',fill=CCC,legend=c('Fagus sylvatica','Quercus ilex','Quercus petraea'),cex=0.7,box.lwd=0,col="grey70",text.font=3)
 #box(lwd=.5)
-abline(v=31.5,lty=2)
+abline(v=37,lty=2)
 
 par(xpd=T)
-text('Hydraulic traits',y=0.70,adj=0.5,x=(31.2)/2,font=4,cex=0.7)
-mtext(side=2,"Sobol's index",cex=.7,line=1.5)
+text('Hydraulic traits',y=0.70,adj=0.5,x=(36)/2,font=4,cex=0.85)
+mtext(side=2,"Sobol's index",cex=.8,line=1.5)
 
 library(shape)
-Arrows(x0 = 0, x1 = 31.2,y0=0.65,y1=0.65,lwd=0.5,code=3,
-       arr.type="triangle", arr.width=0.15,arr.length=0.12,col='gray30')  
+Arrows(x0 = -1, x1 = 36.65,y0=0.65,y1=0.65,lwd=0.5,code=3,
+       arr.type="triangle", arr.width=0.15,arr.length=0.12,col="gray10")  
 
 
 
@@ -209,20 +211,21 @@ axis(2,las=2,cex.axis=0.7,tck=-0.02,lwd=0.5,mgp=c(0,0.4,0))
 axis(1,cex.axis=0.7,tck=-0.03,at=c(-10,AAA[seq(1,50,2)]+0.65),lwd=0,lwd.ticks=.5,labels=F,xlim=c(0,10))
 axis(1,cex.axis=0.7,tck=-0,at=c(-10,46),lwd=0.5,labels=F,xlim=c(0,10))
 mtext(side=3,'B',cex=0.8,line=0,font=2,adj=0)
-abline(v=31.5,lty=2)
+abline(v=37,lty=2)
 abline(v=46,lty=2)
 
 par(xpd=T)
-Arrows(x0 = 0, x1 = 31.2,y0=0.65,y1=0.65,lwd=0.5,code=3,
-       arr.type="triangle", arr.width=0.15,arr.length=0.12,col='gray30')  
-Arrows(x0 = 31.8, x1 = 45.7,y0=0.65,y1=0.65,lwd=0.5,code=3,
-       arr.type="triangle", arr.width=0.15,arr.length=0.12,col='gray30')  
+Arrows(x0 = -1, x1 = 36.65,y0=0.65,y1=0.65,lwd=0.5,code=3,
+       arr.type="triangle", arr.width=0.15,arr.length=0.12,col='gray10')  
+Arrows(x0 = 37.45, x1 = 45.6,y0=0.65,y1=0.65,lwd=0.5,code=3,
+       arr.type="triangle", arr.width=0.15,arr.length=0.12,col='gray10')  
 
 
-text('Hydraulic traits',y=0.70,adj=0.5,x=(31.2)/2,font=4,cex=0.7)
-text('Stand parameters',y=0.70,adj=0.5,x=(31.8+45.7)/2,font=4,cex=0.7)
+text('Hydraulic traits',y=0.70,adj=0.5,x=(36.2)/2,font=4,cex=0.85)
+par(lheight=.7)
+text('Stand\nparameters',y=0.735,adj=0.5,x=(38+45.7)/2,font=4,cex=0.85,lheight=.8)
 
-mtext(side=2,"Sobol's index",cex=.7,line=1.5)
+mtext(side=2,"Sobol's index",cex=.8,line=1.5)
 
 
 
@@ -255,9 +258,9 @@ AZER = c(expression(paste(P['50'])),
          expression(paste(Q['10a'])),
          expression(paste(T['P'])),
          expression(paste(alpha['f'])),
+         expression(paste(Psi[gs50])),
          'LAI',
-         'TAW',
-         expression(paste(Psi[gs50])))
+         'TAW')
          
          
 
@@ -275,9 +278,9 @@ text(x = AAA[seq(2,66,2)],
      #adj = 0.965,
      adj=0.95,
      ## Increase label size.
-     cex = 0.9)
+     cex = 1)
 
-par(new=T,plt=c(0.75,.95,.65,.9),xpd=F)
-plot(0:10,0:10,axes=F,type='n',xlab='',ylab='')
-legend('left',pch = 22, pt.bg=CCC,col=F,legend=c(expression(CFMC[min]),expression(LFMC[min])),pt.lwd=3,cex=0.8)
-
+ par(new=T,plt=c(0.79,.93,.65,.9),xpd=F)
+ plot(0:10,0:10,axes=F,type='n',xlab='',ylab='')
+ legend('right',pch = 22, pt.bg=CCC,col=F,legend=c(expression(CFMC[min]),expression(LFMC[min])),pt.lwd=3,cex=0.8)
+# 

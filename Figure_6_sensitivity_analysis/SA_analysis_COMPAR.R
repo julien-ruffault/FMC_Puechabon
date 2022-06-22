@@ -21,13 +21,13 @@ gc()
 mainDir <-   dirname(dirname(rstudioapi::getActiveDocumentContext()$path))  
 source(paste0(mainDir,'/functions/load.SurEau_Ecos.R')) 
 #define directory where inputs parameters are stocked 
-directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC_new_DefIsT/"
-mainDirOutpout =directoryToRefSimu
+# directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC_new_DefIsT/"
+# mainDirOutpout =directoryToRefSimu
 
 
 directoryToRefSimu2 = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC_new_DefIsF/"
-mainDirOutpout2 =directoryToRefSimu2
 
+mainDirOutpout2 =directoryToRefSimu2
 
 
 
@@ -53,7 +53,6 @@ params=c('P50_VC_Leaf',
          "epsilon_Sym",
          "PiFullTurgor",
          "Q10_1_gmin",
-         "TPhase_gmin",
          "apoFrac_Leaf",
          'LAImax',
          'SWC',
@@ -75,7 +74,7 @@ cores=detectCores()
 cl <- makeCluster(cores[1]-2) #not to overload the computer
 registerDoParallel(cl)
 
-SWCmean <- 147
+SWCmean <- 120
 
 
 vegFile <- read.vegetation.file(filePath =  paste0(mainDir,'/Input_parameters/vegetation_Puechabon.csv'), modeling_options = modeling_options)
@@ -95,7 +94,7 @@ PARAMS[, "PiFullTurgor"] <- qunif(PARAMS[, "PiFullTurgor"], vegFile$PiFullTurgor
 PARAMS[, "apoFrac_Leaf"] <- qunif(PARAMS[, "apoFrac_Leaf"], vegFile$apoFrac_Leaf - percentV * vegFile$apoFrac_Leaf, vegFile$apoFrac_Leaf + percentV * vegFile$apoFrac_Leaf)
 PARAMS[, "Q10_1_gmin"]   <- qunif(PARAMS[, "Q10_1_gmin"]  , vegFile$Q10_1_gmin - percentV * vegFile$Q10_1_gmin, vegFile$Q10_1_gmin + percentV * vegFile$Q10_1_gmin)
 #PARAMS[, "Q10_2_gmin"]   <- qunif(PARAMS[, "Q10_2_gmin"], vegFile$Q10_2_gmin - percentV * vegFile$Q10_2_gmin, vegFile$Q10_2_gmin + percentV * vegFile$Q10_2_gmin)
-PARAMS[, "TPhase_gmin"]   <- qunif(PARAMS[, "TPhase_gmin"], vegFile$TPhase_gmin - percentV * vegFile$TPhase_gmin, vegFile$TPhase_gmin + percentV * vegFile$TPhase_gmin)
+#PARAMS[, "TPhase_gmin"]   <- qunif(PARAMS[, "TPhase_gmin"], vegFile$TPhase_gmin - percentV * vegFile$TPhase_gmin, vegFile$TPhase_gmin + percentV * vegFile$TPhase_gmin)
 #PARAMS[, "LDMC"]          <- qunif(PARAMS[, "LDMC"], vegFile$LDMC - percentV * vegFile$LDMC, vegFile$LDMC + percentV * vegFile$LDMC)
 #PARAMS[, "LMA"]          <- qunif(PARAMS[, "LMA"], vegFile$LMA - percentV * vegFile$LMA, vegFile$LMA + percentV * vegFile$LMA)
 #   

@@ -14,8 +14,6 @@
 #                       "TPhase_gmin"
 
 
-
-
 # clean environment
 rm(list=ls(all=TRUE));gc()
 
@@ -23,7 +21,7 @@ rm(list=ls(all=TRUE));gc()
 mainDir <-   dirname(dirname(rstudioapi::getActiveDocumentContext()$path))  
 source(paste0(mainDir,'/functions/load.SurEau_Ecos.R')) 
 #define directory where inputs parameters are stocked 
-directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC_2/"
+directoryToRefSimu = "/Users/jruffault/Dropbox/Mon Mac (MacBook-Pro-de-Julien.local)/Desktop/sensitivity_FMC_7/"
 mainDirOutpout =directoryToRefSimu
 
 
@@ -49,7 +47,6 @@ params=c('P50_VC_Leaf',
          "epsilon_Sym",
          "PiFullTurgor",
          "Q10_1_gmin",
-         "TPhase_gmin",
          "apoFrac_Leaf",
          'LAImax',
          'SWC',
@@ -91,8 +88,9 @@ PARAMS[, "PiFullTurgor"] <- qunif(PARAMS[, "PiFullTurgor"], vegFile$PiFullTurgor
 PARAMS[, "apoFrac_Leaf"] <- qunif(PARAMS[, "apoFrac_Leaf"], vegFile$apoFrac_Leaf - percentV * vegFile$apoFrac_Leaf, vegFile$apoFrac_Leaf + percentV * vegFile$apoFrac_Leaf)
 PARAMS[, "Q10_1_gmin"]   <- qunif(PARAMS[, "Q10_1_gmin"]  , vegFile$Q10_1_gmin - percentV * vegFile$Q10_1_gmin, vegFile$Q10_1_gmin + percentV * vegFile$Q10_1_gmin)
 #PARAMS[, "Q10_2_gmin"]   <- qunif(PARAMS[, "Q10_2_gmin"], vegFile$Q10_2_gmin - percentV * vegFile$Q10_2_gmin, vegFile$Q10_2_gmin + percentV * vegFile$Q10_2_gmin)
-PARAMS[, "TPhase_gmin"]   <- qunif(PARAMS[, "TPhase_gmin"], vegFile$TPhase_gmin - percentV * vegFile$TPhase_gmin, vegFile$TPhase_gmin + percentV * vegFile$TPhase_gmin)
+#PARAMS[, "TPhase_gmin"]   <- qunif(PARAMS[, "TPhase_gmin"], vegFile$TPhase_gmin - percentV * vegFile$TPhase_gmin, vegFile$TPhase_gmin + percentV * vegFile$TPhase_gmin)
 #PARAMS[, "LDMC"]          <- qunif(PARAMS[, "LDMC"], vegFile$LDMC - percentV * vegFile$LDMC, vegFile$LDMC + percentV * vegFile$LDMC)
+#PARAMS[, "LDMC"]          <- qunif(PARAMS[, "LDMC"], vegFile$LDMC - (10/100) * vegFile$LDMC, vegFile$LDMC + (10/100)* vegFile$LDMC)
 #PARAMS[, "LMA"]          <- qunif(PARAMS[, "LMA"], vegFile$LMA - percentV * vegFile$LMA, vegFile$LMA + percentV * vegFile$LMA)
 #   
 
@@ -156,7 +154,7 @@ foreach(i=1:nrow(PARAMS),.packages=c('lubridate','insol')) %dopar% {
   vegFile$PiFullTurgor_Trunk = PARAMS[,"PiFullTurgor"][i]
   vegFile$Q10_1_gmin = PARAMS[,"Q10_1_gmin"][i]
   #vegFile$Q10_2_gmin = PARAMS[,"Q10_2_gmin"][i]
-  vegFile$TPhase_gmin  = PARAMS[,"TPhase_gmin"][i]
+  #vegFile$TPhase_gmin  = PARAMS[,"TPhase_gmin"][i]
   
   #vegFile$LDMC  = PARAMS[,"LDMC"][i]
   #vegFile$LMA = PARAMS[,"LMA"][i]
@@ -192,7 +190,7 @@ for (i in 1:nrow(PARAMS))
 {
   io =read.csv(paste0(Out_dir,'/SA_FMC_',i,'.csv'),header=T, dec='.',sep="")
   Y1[i]  = io$yearly_FMCCanopy_min
-  Y2[i]  = io$yearly_nbDayLFMC_67
+  Y2[i]  = io$yearly_LFMC_min
   Y3[i]  = io$yearly_nbDayLFMC_57
 }
 
